@@ -32,9 +32,9 @@ end
 -- Enemy is moved from its center.
 function Enemy:draw(xMod, yMod)
     if self.isFast == true then
-        love.graphics.setColor(0, 0.75, 0, 1)
+        love.graphics.setColor(0*255, 0.75*255, 0*255, 1*255)
     else
-        love.graphics.setColor(0.5, 0.25, 0.75, 1)
+        love.graphics.setColor(0.5*255, 0.25*255, 0.75*255, 1*255)
     end
 
     love.graphics.draw(enemyImg, util.round(self.xPos/4)*4 + xMod, util.round(self.yPos/4)*4 + yMod, 0, 1, 1, enemyImg:getWidth()/2, enemyImg:getHeight()/2)

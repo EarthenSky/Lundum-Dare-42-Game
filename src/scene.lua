@@ -12,7 +12,7 @@ end
 
 -- The scene contains all objects that aren't the player.
 function Scene.draw()
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(1*255, 1*255, 1*255, 1*255)
     --love.graphics.rectangle("fill", Scene.getExactX(), Scene.getExactY(), SCREEN_SIZE.x * 3, SCREEN_SIZE.y * 3)
     love.graphics.draw(spaceImg, Scene.getExactX(), Scene.getExactY())
 

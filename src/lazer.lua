@@ -48,7 +48,7 @@ end
 
 -- Lazer is moved from top left
 function Lazer:draw(xMod, yMod)
-    love.graphics.setColor(1, 0.25, 0, 1)
+    love.graphics.setColor(1*255, 0.25*255, 0*255, 1*255)
     love.graphics.rectangle("fill", scene.getExactX() + util.round(self.xPos/4)*4, scene.getExactY() + util.round(self.yPos/4)*4, self.size())
 end
 

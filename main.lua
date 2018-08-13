@@ -9,7 +9,7 @@ function love.load()
     -- Set up the window.
     love.window.setTitle("This is a Game")
     love.window.setMode(SCREEN_SIZE.x, SCREEN_SIZE.y, {resizable=false, vsync=true})
-    love.graphics.setBackgroundColor(0.75, 0.5, 0.25, 1)
+    love.graphics.setBackgroundColor(0.75*255, 0.5*255, 0.25*255, 1*255)
 
     -- Load images here.
     playerImg = love.graphics.newImage("resc/img/PlayerShip.png")

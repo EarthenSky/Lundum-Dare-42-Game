@@ -14,7 +14,7 @@ function Player.draw()
         lazer:draw(0, 0)
     end
 
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(1*255, 1*255, 1*255, 1*255)
     love.graphics.draw(playerImg, SCREEN_SIZE.x/2, SCREEN_SIZE.y/2, _rotation, 1, 1, playerImg:getWidth()/2, playerImg:getHeight()/2)
 end
 
