@@ -61,9 +61,19 @@ function Enemy:update(dt)
         ly = scene.getExactY() + util.round(lazer.yPos/4)*4 - SCREEN_SIZE.x/2
 
         -- Lazer and enemy distance.
-        if math.pow((math.pow(math.abs(lx-xDis), 2)+math.pow(math.abs(ly-yDis), 2)),0.5) < 6*4 then
+        if math.pow((math.pow(math.abs(lx-xDis), 2)+math.pow(math.abs(ly-yDis), 2)),0.5) < 4*4 then
             self.isDead = true
         end
+    end
+
+    -- Check for collision with player.
+    --px = scene.getExactX() - SCREEN_SIZE.x/2
+    --py = scene.getExactY() - SCREEN_SIZE.y/2
+
+    -- Lazer and enemy distance.
+    if math.pow((math.pow(xDis, 2) + math.pow(yDis, 2)),0.5) < 3*4+5*4 then
+        self.isDead = true
+        loseLife()
     end
 end
 

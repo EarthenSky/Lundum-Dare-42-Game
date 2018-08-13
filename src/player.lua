@@ -5,6 +5,7 @@ Player.lazerList = {}
 local _SPEED = 300
 
 local _direction = 0  -- (0, 1, 2, 3) -> (up, down, left, right)
+local _next_direction = 0  -- (0, 1, 2, 3) -> (up, down, left, right)
 local _rotation = 0
 
 function Player.draw()
@@ -34,7 +35,7 @@ function changeDirection(dir)
         slowDown = function(dt) scene.xPos = scene.xPos - tempSpeed*dt end
     end
 
-    _direction = dir
+    _next_direction = dir
 end
 
 -- Control bool switches.
@@ -96,7 +97,6 @@ function checkCollision(dt)
     -- Check Enemy Collision.
 end
 
-local lazerID = 0
 local shootCounter = 0
 function Player.update(dt)
     -- Case: player is not changing it's direction.
@@ -106,17 +106,21 @@ function Player.update(dt)
         end
     else
         if tempSpeed > 0 then
-            tempSpeed = tempSpeed - 200
+            tempSpeed = tempSpeed - 20
             slowDown(dt)
         else
-            if _direction == 0 then
+            if _next_direction == 0 then
                 _rotation = 0
-            elseif _direction == 1 then
+                _direction = 0
+            elseif _next_direction == 1 then
                 _rotation = math.pi
-            elseif _direction == 2 then
+                _direction = 1
+            elseif _next_direction == 2 then
                 _rotation = math.pi*1.5
-            elseif _direction == 3 then
+                _direction = 2
+            elseif _next_direction == 3 then
                 _rotation = math.pi*0.5
+                _direction = 3
             end
 
             directionChange = false
@@ -126,6 +130,24 @@ function Player.update(dt)
     --print (scene.getExactX(), scene.getExactY())
 
     checkCollision(dt) -- Check collision after moving.
+
+    local garbageList = {}
+
+    -- Move the lazers and check for garbage items.
+    for k, lazer in ipairs(Player.lazerList) do
+        lazer:update(dt)
+
+        if lazer.isDead == true then
+            table.insert(garbageList, k)
+            print("found dead", lazer.lazer_num, k)
+        end
+    end
+    -- TODO: why does the second lazer get cleaned but not removed?
+    -- Clean up garbage.
+    for k, item in ipairs(garbageList) do
+        print ("clean", item)
+        table.remove( Player.lazerList, item )
+    end
 
     -- Press space to shoot, cooldown 0.5 second.
     if love.keyboard.isDown("space") and is_space_down == false then
@@ -138,23 +160,6 @@ function Player.update(dt)
             is_space_down = false
             shootCounter = 0
         end
-    end
-
-    local garbageList = {}
-
-    -- Move the lazers and check for garbage items.
-    for k, lazer in ipairs(Player.lazerList) do
-        lazer:update(dt)
-
-        if lazer.isDead == true then
-            table.insert(garbageList, k)
-        end
-    end
-
-    -- Clean up garbage.
-    for k, item in ipairs(garbageList) do
-        print ("clean", item, table.getn(Player.lazerList), dt)
-        table.remove( Player.lazerList, item )
     end
 end
 

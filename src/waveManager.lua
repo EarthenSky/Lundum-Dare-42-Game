@@ -36,6 +36,7 @@ function WaveManager.update(dt)
             -- Case: all enemies have been spawned.
             if enemiesSpawned >= WaveManager.enemySpawnCount then
                 WaveManager.finishedSpawning = true
+                enemiesSpawned = 0
             end
         else
             print ("Spawning over." .. dt)

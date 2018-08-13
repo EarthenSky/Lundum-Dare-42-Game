@@ -7,6 +7,7 @@ function Lazer:new(x, y, dir, lazer_num)
     selfObj = {}
     selfObj.xPos, selfObj.yPos = x, y
     selfObj.dir = dir
+    selfObj.lazer_num = lazer_num
 
     if dir == 0 then
         selfObj.size = function() return 4, 8 end --w,h
@@ -39,7 +40,7 @@ function Lazer:new(x, y, dir, lazer_num)
     end
 
     selfObj.isDead = false
-
+    print("enemmy", lazer_num)
     -- Make this into a class.
     self.__index = self
     return setmetatable(selfObj, self)
@@ -68,6 +69,7 @@ function Lazer:update(dt)
     local y = util.round(self.yPos/4)*4
     if x < 0 or x > SCREEN_SIZE.x*3 or y < 0 or y > SCREEN_SIZE.y*3 then
         self.isDead = true
+        print("ded", self.lazer_num)
     end
     --print( "thing", util.round(self.xPos/4)*4, util.round(self.yPos/4)*4 )
 end
