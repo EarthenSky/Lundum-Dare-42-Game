@@ -67,11 +67,15 @@ function Lazer:update(dt)
     -- Check wall collision.
     local x = util.round(self.xPos/4)*4
     local y = util.round(self.yPos/4)*4
-    if x < 0 or x > SCREEN_SIZE.x*3 or y < 0 or y > SCREEN_SIZE.y*3 then
+    --if x < 0 or x > SCREEN_SIZE.x*3 or y < 0 or y > SCREEN_SIZE.y*3 then
+    --    self.isDead = true
+    --end
+
+    --Check tile collision (and wall by accident.)
+    if tileManager.isTile(x, y) == true then
         self.isDead = true
-        print("ded", self.lazer_num)
+        tileManager.removeTile(x, y)  -- Destroy the tile.
     end
-    --print( "thing", util.round(self.xPos/4)*4, util.round(self.yPos/4)*4 )
 end
 
 return Lazer

@@ -16,6 +16,8 @@ function Scene.draw()
     --love.graphics.rectangle("fill", Scene.getExactX(), Scene.getExactY(), SCREEN_SIZE.x * 3, SCREEN_SIZE.y * 3)
     love.graphics.draw(spaceImg, Scene.getExactX(), Scene.getExactY())
 
+    tileManager.draw()  -- Draw tiles over space, under enemies.
+
     -- Draw enemies above the background.
     for k, enemy in pairs(Scene.enemyList) do
         enemy:draw(Scene.getExactX(), Scene.getExactY())

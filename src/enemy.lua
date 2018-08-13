@@ -1,7 +1,5 @@
 Enemy = {}
 
-local _speed = 100  -- 1/3 player speed
-
 -- Randomizes start position.
 function initPosition()
     side = love.math.random(0, 3)
@@ -23,6 +21,8 @@ function Enemy:new()
     selfObj.xPos, selfObj.yPos = initPosition()
     selfObj.isDead = false
     selfObj.isFast = false
+    selfObj.speed = 50  -- ~1/6 player speed
+    selfObj.tileCounter = 0
 
     -- Make this into a class.
     self.__index = self
@@ -31,7 +31,7 @@ end
 
 -- Enemy is moved from its center.
 function Enemy:draw(xMod, yMod)
-    if selfObj.isFast == true then
+    if self.isFast == true then
         love.graphics.setColor(0, 0.75, 0, 1)
     else
         love.graphics.setColor(0.5, 0.25, 0.75, 1)
@@ -45,15 +45,23 @@ function Enemy:update(dt)
     yDis = self.yPos + scene.getExactY() - SCREEN_SIZE.y/2
 
     -- Case: enemy turns into a tile.
-    ----if math.pow((math.pow(xDis, 2) + math.pow(yDis, 2)),0.5) <= SCREEN_SIZE.X then
+    if math.pow(math.pow(math.abs(xDis), 2)+math.pow(math.abs(yDis), 2), 0.5) >= SCREEN_SIZE.x*1.5 and tileManager.isTile(self.xPos, self.yPos) == false and self.tileCounter ~= -1 then
+        self.tileCounter = self.tileCounter + dt
+        if self.tileCounter > 2 then
+            self.tileCounter = -1
 
-    ----else  -- Case: ai moves towards player.
+            tileManager.createTile(self.xPos, self.yPos)
+
+            self.speed = self.speed*2.5
+            self.isFast = true
+        end
+    else  -- Case: ai moves towards player.
         c = math.pow((math.pow(xDis, 2)+math.pow(yDis, 2)),0.5)
-        scale = _speed/c
+        scale = self.speed/c
 
         self.xPos = self.xPos - xDis*scale*dt
         self.yPos = self.yPos - yDis*scale*dt
-    ----end
+    end
 
     -- Check for collision with lazer.
     for k, lazer in ipairs(player.lazerList) do
@@ -61,7 +69,7 @@ function Enemy:update(dt)
         ly = scene.getExactY() + util.round(lazer.yPos/4)*4 - SCREEN_SIZE.x/2
 
         -- Lazer and enemy distance.
-        if math.pow((math.pow(math.abs(lx-xDis), 2)+math.pow(math.abs(ly-yDis), 2)),0.5) < 4*4 then
+        if math.pow((math.pow(math.abs(lx-xDis), 2)+math.pow(math.abs(ly-yDis), 2)),0.5) < 5*4 then
             self.isDead = true
         end
     end
@@ -71,7 +79,7 @@ function Enemy:update(dt)
     --py = scene.getExactY() - SCREEN_SIZE.y/2
 
     -- Lazer and enemy distance.
-    if math.pow((math.pow(xDis, 2) + math.pow(yDis, 2)),0.5) < 3*4+5*4 then
+    if math.pow((math.pow(xDis, 2) + math.pow(yDis, 2)),0.5) < 3*4+6*4 then
         self.isDead = true
         loseLife()
     end

@@ -2,7 +2,7 @@ local Player = {}  -- This is a Module
 
 Player.lazerList = {}
 
-local _SPEED = 300
+local _SPEED = 350
 
 local _direction = 0  -- (0, 1, 2, 3) -> (up, down, left, right)
 local _next_direction = 0  -- (0, 1, 2, 3) -> (up, down, left, right)
@@ -43,7 +43,7 @@ local is_w_down = false
 local is_a_down = false
 local is_s_down = false
 local is_d_down = false
-local is_space_down = false
+local shoot_key_down = false
 
 function movePlayer(dt)
     if love.keyboard.isDown("w") and is_w_down == false then
@@ -94,9 +94,19 @@ function checkCollision(dt)
         loseLife() -- Case: hit wall.
     end
 
-    -- Check Enemy Collision.
+    --Check tile collision.
+    xPos = -scene.getExactX() + SCREEN_SIZE.x/2
+    yPos = -scene.getExactY() + SCREEN_SIZE.y/2
+
+    if tileManager.isTile(xPos+playerImg:getWidth()/2, yPos+playerImg:getHeight()/2) == true or
+        tileManager.isTile(xPos-playerImg:getWidth()/2, yPos-playerImg:getHeight()/2) == true or
+        tileManager.isTile(xPos+playerImg:getWidth()/2, yPos-playerImg:getHeight()/2) == true or
+        tileManager.isTile(xPos-playerImg:getWidth()/2, yPos+playerImg:getHeight()/2) == true then
+        loseLife() -- Case: hit tile.
+    end
 end
 
+local lazerID = 0
 local shootCounter = 0
 function Player.update(dt)
     -- Case: player is not changing it's direction.
@@ -134,30 +144,47 @@ function Player.update(dt)
     local garbageList = {}
 
     -- Move the lazers and check for garbage items.
-    for k, lazer in ipairs(Player.lazerList) do
+    for i, lazer in ipairs(Player.lazerList) do
         lazer:update(dt)
 
         if lazer.isDead == true then
-            table.insert(garbageList, k)
-            print("found dead", lazer.lazer_num, k)
+            table.insert(garbageList, i)
         end
     end
-    -- TODO: why does the second lazer get cleaned but not removed?
+
     -- Clean up garbage.
+    local indexMod = 0
     for k, item in ipairs(garbageList) do
-        print ("clean", item)
-        table.remove( Player.lazerList, item )
+        --util.printTable(Player.lazerList)
+        table.remove( Player.lazerList, k-indexMod )  -- remove the first item. (the second item then becomes the first item.)
+        indexMod = indexMod + 1
     end
 
-    -- Press space to shoot, cooldown 0.5 second.
-    if love.keyboard.isDown("space") and is_space_down == false then
-        table.insert(Player.lazerList, lazer:new(-scene.getExactX() + SCREEN_SIZE.x/2, -scene.getExactY() + SCREEN_SIZE.y/2, _direction, 0))  -- left lazer
-        table.insert(Player.lazerList, lazer:new(-scene.getExactX() + SCREEN_SIZE.x/2, -scene.getExactY() + SCREEN_SIZE.y/2, _direction, 1))  -- right lazer
-        is_space_down = true
-    elseif is_space_down == true then
+    -- Press space to shoot, cooldown 0.5 second
+    local is_shoot_key_pressed = love.keyboard.isDown("right") or love.keyboard.isDown("left") or
+                                 love.keyboard.isDown("up") or love.keyboard.isDown("down")
+    if is_shoot_key_pressed and shoot_key_down == false then
+        local shoot_dir = -1
+        if love.keyboard.isDown("up") then
+            shoot_dir = 0
+        elseif love.keyboard.isDown("down") then
+            shoot_dir = 1
+        elseif love.keyboard.isDown("left") then
+            shoot_dir = 2
+        elseif love.keyboard.isDown("right") then
+            shoot_dir = 3
+        end
+
+        --lazerID = lazerID + 2  -- Increment id generator.
+        --Player.lazerList[lazerID-1] = lazer:new(-scene.getExactX() + SCREEN_SIZE.x/2, -scene.getExactY() + SCREEN_SIZE.y/2, shoot_dir, 0)  -- left lazer
+        --Player.lazerList[lazerID] = lazer:new(-scene.getExactX() + SCREEN_SIZE.x/2, -scene.getExactY() + SCREEN_SIZE.y/2, shoot_dir, 1)  -- right lazer
+        table.insert(Player.lazerList, lazer:new(-scene.getExactX() + SCREEN_SIZE.x/2, -scene.getExactY() + SCREEN_SIZE.y/2, shoot_dir, 0))  -- left lazer
+        table.insert(Player.lazerList, lazer:new(-scene.getExactX() + SCREEN_SIZE.x/2, -scene.getExactY() + SCREEN_SIZE.y/2, shoot_dir, 1))  -- right lazer
+        shoot_key_down = true
+    elseif shoot_key_down == true then  -- Wait 0.5s after shot.
         shootCounter = shootCounter + dt
-        if shootCounter > 0.5 then
-            is_space_down = false
+        if shootCounter > 1/3 then
+            shoot_key_down = false
             shootCounter = 0
         end
     end

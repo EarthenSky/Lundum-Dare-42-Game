@@ -20,4 +20,16 @@ function Util.round(num)
     return math.floor(num+0.5)
 end
 
+function Util.printTable(tbl)
+    print("--------------")
+    for index, data in ipairs(tbl) do
+        print("index#: ", index)
+
+        for key, value in pairs(data) do
+            print('\t', key, value)
+        end
+    end
+    print("--------------")
+end
+
 return Util

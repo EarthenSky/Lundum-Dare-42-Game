@@ -2,7 +2,7 @@ local WaveManager = {}  -- This is a Module
 
 WaveManager.waveEnded = false
 WaveManager.enemySpawnCount = 10
-WaveManager.spawnRate = 1 -- Enemies per second.
+WaveManager.spawnRate = 0.7 --Enemies per second.
 WaveManager.finishedSpawning = false
 
 -- Next wave calculations.
@@ -11,9 +11,12 @@ function nextWave()
     WaveManager.finishedSpawning = false
     ui.wave = ui.wave + 1
 
-    WaveManager.enemySpawnCount = WaveManager.enemySpawnCount + 8
-    if WaveManager.spawnRate < 6 then
-        WaveManager.spawnRate = WaveManager.spawnRate + 0.6
+    if WaveManager.enemySpawnCount < 105 then  --max enemies per round.
+        WaveManager.enemySpawnCount = WaveManager.enemySpawnCount + 6
+    end
+
+    if WaveManager.spawnRate < 2.5 then  --max spawn rate for enemies.
+        WaveManager.spawnRate = WaveManager.spawnRate + 0.3
     end
 
 end
@@ -39,7 +42,7 @@ function WaveManager.update(dt)
                 enemiesSpawned = 0
             end
         else
-            print ("Spawning over." .. dt)
+            --print ("Spawning over." .. dt)
             if table.getn(scene.enemyList) == 0 then  -- Case: all enemies are dead.
                 WaveManager.waveEnded = true
             end
