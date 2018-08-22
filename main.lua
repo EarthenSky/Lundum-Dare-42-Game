@@ -11,10 +11,13 @@ function love.load()
     love.window.setMode(SCREEN_SIZE.x, SCREEN_SIZE.y, {resizable=false, vsync=true})
     love.graphics.setBackgroundColor(0.75*255, 0.5*255, 0.25*255, 1*255)
 
-    -- Load images here.
+    -- Load assets here.
     playerImg = love.graphics.newImage("resc/img/PlayerShip.png")
     spaceImg = love.graphics.newImage("resc/img/Background.png")
     enemyImg = love.graphics.newImage("resc/img/Enemy.png")
+
+    bgm = love.audio.newSource("resc/audio/224(ludumdare42).wav")
+
 
     -- Modules and classes are loaded here.
     util = require("util")
@@ -31,6 +34,11 @@ function love.load()
 
     -- Any initialization code goes here.
     gPauseGame = true  -- Game starts with player not moving.
+
+    -- Start bgm.
+    bgm:setVolume(0.75)
+    bgm:setLooping(true)
+    bgm:play()
 
     -- Init modules
 
